@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LogiTrack TMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #print-section, #print-section * {
+          visibility: visible;
+        }
+        #print-section {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+      }
+      /* Ensure text is always readable against backgrounds */
+      .text-visible {
+        color: #1e293b; /* slate-800 */
+      }
+      .bg-soft {
+        background-color: #f8fafc;
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "recharts": "https://esm.sh/recharts@2.15.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.473.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/"
+  }
+}
+</script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 font-sans">
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "name": "LogiTrack Transport Management System",
+  "description": "A comprehensive logistics and transport management system with role-based access for Admins, Supervisors, and Drivers. Features include job scheduling, vehicle/driver status tracking, multilingual support (English/Hindi), and real-time analytics.",
+  "requestFramePermissions": []
+}
