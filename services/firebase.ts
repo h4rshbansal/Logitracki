@@ -1,8 +1,8 @@
 
-// Use standard modular imports for Firebase v9+
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+// Use standard modular imports for Firebase v9+ with a more compatible pattern
+import * as firebaseApp from 'firebase/app';
+import * as firebaseAuth from 'firebase/auth';
+import * as firebaseFirestore from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCsiM7WDaDGa7nv87nHbkKE6fsFDwMnNZA",
@@ -14,8 +14,8 @@ const firebaseConfig = {
   measurementId: "G-X38M823TQM"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Export auth and db instances initialized with the modular SDK
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Initialize Firebase using the module namespace to avoid missing named export errors
+const app = firebaseApp.initializeApp(firebaseConfig);
+// Export auth and db instances initialized with the modular SDK methods
+export const auth = firebaseAuth.getAuth(app);
+export const db = firebaseFirestore.getFirestore(app);

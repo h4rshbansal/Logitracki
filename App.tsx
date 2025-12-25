@@ -1,12 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-// Correctly import Firebase Auth functions as named exports from 'firebase/auth'
-import { 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged, 
-  createUserWithEmailAndPassword 
-} from 'firebase/auth';
+// Import Firebase Auth functions through the module namespace to resolve named export errors
+import * as firebaseAuth from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, db } from './services/firebase';
 import { UserRole, UserProfile } from './types';
@@ -33,8 +28,8 @@ const AuthScreen: React.FC = () => {
     try {
       if (isLogin) {
         try {
-          // 1. Try standard Auth Login
-          await signInWithEmailAndPassword(auth, email, password);
+          // 1. Try standard Auth Login using namespaced method
+          await firebaseAuth.signInWithEmailAndPassword(auth, email, password);
         } catch (authErr: any) {
           // 2. If Auth fails, check if an Admin "pre-set" this password in Firestore
           const usersRef = collection(db, 'users');
@@ -43,22 +38,20 @@ const AuthScreen: React.FC = () => {
           
           if (!querySnapshot.empty) {
             const userData = querySnapshot.docs[0].data();
-            // Auto-activate the account by creating a real Auth user
-            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            // Auto-activate the account by creating a real Auth user using namespaced method
+            const cred = await firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
             // Link the existing Firestore record to the new Auth UID
             await setDoc(doc(db, 'users', cred.user.uid), {
               ...userData,
               uid: cred.user.uid,
               _tempPass: null // Clear temp password after activation
             });
-            // Also delete the old "pre-created" record if it used a random ID
-            // In our AdminDashboard, we used random ID, so we keep the updated one at doc(db, 'users', cred.user.uid)
           } else {
             throw authErr; // Rethrow if no pre-set password matches
           }
         }
       } else {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const cred = await firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
         await setDoc(doc(db, 'users', cred.user.uid), {
           uid: cred.user.uid,
           name,
@@ -197,7 +190,7 @@ const Layout: React.FC<{ user: UserProfile, children: React.ReactNode }> = ({ us
             </div>
 
             <button 
-              onClick={() => signOut(auth)}
+              onClick={() => firebaseAuth.signOut(auth)}
               className="p-2.5 text-slate-400 hover:text-red-600 bg-slate-50 hover:bg-red-50 rounded-xl transition-all"
               title={t('logout')}
             >
@@ -227,15 +220,13 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     // Listen for authentication state changes and fetch the user profile from Firestore
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    const unsub = firebaseAuth.onAuthStateChanged(auth, async (u) => {
       if (u) {
         const docRef = doc(db, 'users', u.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserProfile(docSnap.data() as UserProfile);
         } else {
-          // Case where Auth exists but Firestore profile missing
-          // Could happen if setDoc fails during signup
           setUserProfile(null);
         }
       } else {
@@ -247,17 +238,7 @@ const AppContent: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center">
-        <div className="bg-slate-800 p-12 rounded-[3rem] shadow-2xl flex flex-col items-center">
-          <Truck className="animate-bounce text-indigo-500 mb-6" size={64} />
-          <p className="text-white font-black text-xl tracking-widest uppercase animate-pulse">LogiTrack</p>
-          <div className="w-48 h-1 bg-slate-700 mt-6 rounded-full overflow-hidden">
-            <div className="h-full bg-indigo-500 animate-[loading_1.5s_infinite_linear]"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Removed the stylized loading screen as requested
   }
 
   if (!userProfile) {
